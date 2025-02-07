@@ -1,0 +1,59 @@
+For the producer
+
+1. We need to get the channel from the connection which exposes the APIs
+2. We then declare the exchange give it a name, and type which could be direct, fanout, topic, headers
+3. We can publish a message to the exchange, but we need to specify the routing key which will be used to know what queue the exchange will send the message to
+
+
+Options when declaring exchange and the meaning
+
+1. durable (true)
+	•	Meaning: Determines if the exchange will persist after RabbitMQ is restarted.
+	•	true: The exchange is durable and will survive a server restart.
+	•	false: The exchange will be deleted when RabbitMQ restarts.
+Use Case:
+Set durable = true for exchanges that you want to remain available across server restarts (e.g., in production environments).
+
+2. auto-delete (false)
+	•	Meaning: Determines if the exchange should be automatically deleted when the last queue or binding associated with it is removed.
+	•	true: The exchange will be deleted when all queues and bindings are gone.
+	•	false: The exchange will remain even if there are no queues or bindings.
+
+Use Case:
+Set auto-delete = true for temporary exchanges (e.g., during testing or when handling short-lived workloads).
+
+3. internal (false)
+	•	Meaning: Specifies if the exchange is internal to RabbitMQ.
+	•	true: The exchange is internal and can only be used by other exchanges (not directly by publishers).
+	•	false: The exchange can be used by publishers to send messages directly.
+
+Use Case:
+You typically leave this as false unless you’re building complex routing where exchanges forward messages to each other internally.
+
+4. no-wait (false)
+	•	Meaning: Determines if the server should respond to the client after declaring the exchange.
+	•	true: The client doesn’t wait for a response from RabbitMQ (no confirmation).
+	•	false: The client waits for confirmation that the exchange was declared successfully.
+
+Use Case:
+Use no-wait = true if you want to reduce latency and don’t care about getting a response. However, errors might not be immediately detected this way.
+
+
+Options when publishing to queue and the meaning
+1. Exchange
+2. Routing key
+3. Mandatory
+mandatory (false)
+	•	Determines the behavior if no queue is bound to the specified routing key.
+	•	true: If no queue is bound to the routing key, the message is returned to the sender.
+	•	false: The message is discarded if no matching queue is found.
+4. Immediate
+	•	Controls if the message should be delivered only if a consumer is currently able to receive it.
+	•	true: The message will not be stored in the queue and will be returned if no consumers are ready.
+	•	false: The message will be queued if no consumers are available.
+
+
+Consumer
+1. Declare the queue with a name and other options 
+2. We bind the queue name to an exchange and a routing key, if the exchange is a topic exchange the routing key could be a parttern
+3. We consume from the queue name

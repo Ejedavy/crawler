@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  redis_service:
+    container_name: redis_container
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+    restart: always
+    command: redis-server --loglevel warning
+    volumes:
+      - './docker-volumes/cache:/data'
+
+  mongodb_service:
+    container_name: mongodb_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - './docker-volumes/data:/data/db'
+
+  rabbitmq_service:
+    container_name: rabbitmq_container
+    image: rabbitmq:3.13-rc-management-alpine
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+      - '5672:5672'
+      - '15672:15672'
